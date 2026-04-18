@@ -1,0 +1,28 @@
+server:
+  work_dir: "/tmp/chunkdocker-server"
+  temp_dir: "/tmp/chunkdocker-server/tmp"
+  chunk_size: "50MiB"
+  chunks_per_image: 5
+  docker_binary: "docker"
+  registry: "docker.io"
+  repository: "myuser/file-chunks"
+  release: "v1"
+  image_chunk_base_dir: "/chunks"
+  keep_temp: false
+  build:
+    no_cache: true
+    pull: false
+  push:
+    retries: 3
+
+client:
+  work_dir: "/tmp/chunkdocker-client"
+  temp_dir: "/tmp/chunkdocker-client/tmp"
+  output_dir: "./output"
+  docker_binary: "docker"
+  keep_temp: false
+  download:
+    parallelism: 1
+    retries: 3
+  assemble:
+    overwrite: false
