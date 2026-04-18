@@ -1,4 +1,4 @@
-chunkdocker
+
 output/
 *.manifest.json
 prodconf.yaml
