@@ -21,6 +21,7 @@ func TestManifestRoundTrip(t *testing.T) {
 		ChunkSize:         50,
 		ChunkCount:        2,
 		ChunksPerImage:    2,
+		PublishRegistry:   "docker.io",
 		Registry:          "docker.io",
 		Repository:        "example/chunks",
 		Release:           "v1",
@@ -45,5 +46,17 @@ func TestManifestRoundTrip(t *testing.T) {
 
 	if output.FileName != input.FileName || output.ChunkCount != input.ChunkCount {
 		t.Fatalf("round trip mismatch: got %+v want %+v", output, input)
+	}
+}
+
+func TestRewriteImageRegistry(t *testing.T) {
+	t.Parallel()
+
+	got, err := RewriteImageRegistry("docker.io/example/chunks:v1-g00000", "mirror.local")
+	if err != nil {
+		t.Fatalf("RewriteImageRegistry returned error: %v", err)
+	}
+	if got != "mirror.local/example/chunks:v1-g00000" {
+		t.Fatalf("RewriteImageRegistry returned %q", got)
 	}
 }

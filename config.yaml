@@ -5,6 +5,7 @@ server:
   chunks_per_image: 5
   docker_binary: "docker"
   registry: "docker.io"
+  manifest_registry: "docker-mirror.internal"
   repository: "myuser/file-chunks"
   release: "v1"
   image_chunk_base_dir: "/chunks"
@@ -20,6 +21,7 @@ client:
   temp_dir: "/tmp/chunkdocker-client/tmp"
   output_dir: "./output"
   docker_binary: "docker"
+  registry_override: ""
   keep_temp: false
   download:
     parallelism: 1

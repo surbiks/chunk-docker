@@ -18,6 +18,7 @@ type Manifest struct {
 	ChunkSize         int64        `json:"chunk_size"`
 	ChunkCount        int          `json:"chunk_count"`
 	ChunksPerImage    int          `json:"chunks_per_image"`
+	PublishRegistry   string       `json:"publish_registry"`
 	Registry          string       `json:"registry"`
 	Repository        string       `json:"repository"`
 	Release           string       `json:"release"`
@@ -64,6 +65,18 @@ func (m *Manifest) Validate() error {
 	}
 	if m.ChunksPerImage <= 0 {
 		return fmt.Errorf("chunks_per_image must be at least 1")
+	}
+	if m.PublishRegistry == "" {
+		return fmt.Errorf("publish_registry is required")
+	}
+	if m.Registry == "" {
+		return fmt.Errorf("registry is required")
+	}
+	if m.Repository == "" {
+		return fmt.Errorf("repository is required")
+	}
+	if m.Release == "" {
+		return fmt.Errorf("release is required")
 	}
 	if len(m.Chunks) == 0 {
 		return fmt.Errorf("chunks list must not be empty")
@@ -129,4 +142,27 @@ func Load(path string) (*Manifest, error) {
 	}
 
 	return &m, nil
+}
+
+func BuildImageReference(registry, repository, tag string) string {
+	return fmt.Sprintf("%s/%s:%s", registry, repository, tag)
+}
+
+func RewriteImageRegistry(imageRef, newRegistry string) (string, error) {
+	if newRegistry == "" {
+		return imageRef, nil
+	}
+
+	slash := -1
+	for i := 0; i < len(imageRef); i++ {
+		if imageRef[i] == '/' {
+			slash = i
+			break
+		}
+	}
+	if slash <= 0 || slash == len(imageRef)-1 {
+		return "", fmt.Errorf("invalid image reference %q", imageRef)
+	}
+
+	return fmt.Sprintf("%s/%s", newRegistry, imageRef[slash+1:]), nil
 }

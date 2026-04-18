@@ -115,11 +115,15 @@ This distinction is important and must not be lost during future refactors.
   - `client`
 - `server.chunk_size` supports values like `20MB` and `32MiB`.
 - `server.chunks_per_image` controls grouping.
+- `server.registry` is the push target.
+- `server.manifest_registry` controls which registry is written into manifest image references and defaults to `server.registry`.
 - `server.image_chunk_base_dir` must stay absolute and deterministic.
+- `client.registry_override` can rewrite manifest image references at fetch time.
 - `client.assemble.overwrite` controls whether fetch can replace an existing output file.
 
 ### Current manifest contract
 - Manifest version is `1`.
+- Manifest stores both `publish_registry` and `registry`.
 - Chunks are always first-class and listed individually.
 - Group entries list the chunk indexes each image contains.
 - Each chunk entry includes:

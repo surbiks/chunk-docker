@@ -113,11 +113,12 @@ func (f *Fetcher) Fetch(ctx context.Context, req Request) error {
 }
 
 func (f *Fetcher) pullAndExtractGroup(ctx context.Context, docker *dockerops.Client, doc *manifest.Manifest, group manifest.GroupEntry, extractDir string, chunkPaths []string) error {
-	var image string
-	if group.Image != "" {
-		image = group.Image
-	} else {
+	if group.Image == "" {
 		return fmt.Errorf("manifest group %d is missing image reference", group.GroupIndex)
+	}
+	image, err := manifest.RewriteImageRegistry(group.Image, f.cfg.Client.RegistryOverride)
+	if err != nil {
+		return fmt.Errorf("resolve image reference for group %d: %w", group.GroupIndex, err)
 	}
 
 	for attempt := 1; attempt <= f.cfg.Client.Download.Retries; attempt++ {

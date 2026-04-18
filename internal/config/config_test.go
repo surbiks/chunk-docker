@@ -45,6 +45,9 @@ client:
 	if cfg.Server.ImageChunkBaseDir != "/chunks" {
 		t.Fatalf("expected default image chunk base dir, got %q", cfg.Server.ImageChunkBaseDir)
 	}
+	if cfg.Server.ManifestRegistry != "docker.io" {
+		t.Fatalf("expected manifest registry to default to server registry, got %q", cfg.Server.ManifestRegistry)
+	}
 	if cfg.Client.Download.Parallelism != 1 {
 		t.Fatalf("expected default parallelism 1, got %d", cfg.Client.Download.Parallelism)
 	}

@@ -9,6 +9,7 @@
 - It groups consecutive chunks into Docker images based on `chunks_per_image`.
 - Each chunk is added to the image with its own `COPY` instruction, so grouped images still keep chunk boundaries visible as distinct layers.
 - It pushes the images and writes a JSON manifest.
+- The manifest can point to a different registry than the one used for push, which is useful when clients pull through a mirror or proxy registry.
 
 - `fetch` runs inside the restricted network.
 - It reads the manifest.
@@ -48,6 +49,12 @@ The config file must contain exactly two top-level sections:
 - `client`
 
 See [config.yaml](config.yaml) for a sample.
+
+Registry behavior:
+
+- `server.registry`: where `publish` pushes images.
+- `server.manifest_registry`: registry hostname written into manifest image references. If omitted, it defaults to `server.registry`.
+- `client.registry_override`: optional fetch-time registry rewrite. If set, `fetch` rewrites manifest image references to use this registry.
 
 ## Usage
 
@@ -99,6 +106,7 @@ Example:
   "chunk_size": 52428800,
   "chunk_count": 12,
   "chunks_per_image": 5,
+  "publish_registry": "docker.io",
   "registry": "docker.io",
   "repository": "myuser/file-chunks",
   "release": "v1",
@@ -151,6 +159,7 @@ COPY chunk-00002.bin /chunks/chunk-00002.bin
 - This MVP is Linux-first.
 - Docker integration uses the Docker CLI through `os/exec`.
 - Image builds explicitly disable provenance and SBOM attestations so registry mirrors that do not support OCI referrers can still pull the images reliably.
+- Manifest image references may intentionally differ from the push registry so restricted clients can pull from a mirror registry.
 - The fetch workflow is intentionally sequential for predictable behavior.
 - Cleanup failures are logged and do not mask the primary failure.
 

@@ -22,6 +22,7 @@ type ServerConfig struct {
 	ChunksPerImage    int      `yaml:"chunks_per_image"`
 	DockerBinary      string   `yaml:"docker_binary"`
 	Registry          string   `yaml:"registry"`
+	ManifestRegistry  string   `yaml:"manifest_registry"`
 	Repository        string   `yaml:"repository"`
 	Release           string   `yaml:"release"`
 	ImageChunkBaseDir string   `yaml:"image_chunk_base_dir"`
@@ -40,13 +41,14 @@ type Push struct {
 }
 
 type ClientConfig struct {
-	WorkDir      string   `yaml:"work_dir"`
-	TempDir      string   `yaml:"temp_dir"`
-	OutputDir    string   `yaml:"output_dir"`
-	DockerBinary string   `yaml:"docker_binary"`
-	KeepTemp     bool     `yaml:"keep_temp"`
-	Download     Download `yaml:"download"`
-	Assemble     Assemble `yaml:"assemble"`
+	WorkDir          string   `yaml:"work_dir"`
+	TempDir          string   `yaml:"temp_dir"`
+	OutputDir        string   `yaml:"output_dir"`
+	DockerBinary     string   `yaml:"docker_binary"`
+	RegistryOverride string   `yaml:"registry_override"`
+	KeepTemp         bool     `yaml:"keep_temp"`
+	Download         Download `yaml:"download"`
+	Assemble         Assemble `yaml:"assemble"`
 }
 
 type Download struct {
@@ -84,6 +86,9 @@ func (c *Root) applyDefaults() {
 	}
 	if c.Server.ChunksPerImage == 0 {
 		c.Server.ChunksPerImage = 1
+	}
+	if c.Server.ManifestRegistry == "" {
+		c.Server.ManifestRegistry = c.Server.Registry
 	}
 	if c.Server.ImageChunkBaseDir == "" {
 		c.Server.ImageChunkBaseDir = "/chunks"

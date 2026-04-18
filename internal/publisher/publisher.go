@@ -152,6 +152,7 @@ func buildManifest(sourceFile string, split *chunker.SplitResult, groups []chunk
 		ChunkSize:         cfg.ChunkSize.Int64(),
 		ChunkCount:        len(split.Chunks),
 		ChunksPerImage:    cfg.ChunksPerImage,
+		PublishRegistry:   cfg.Registry,
 		Registry:          cfg.Registry,
 		Repository:        cfg.Repository,
 		Release:           cfg.Release,
@@ -161,10 +162,11 @@ func buildManifest(sourceFile string, split *chunker.SplitResult, groups []chunk
 	}
 
 	for _, group := range groups {
+		manifestImage := manifest.BuildImageReference(cfg.ManifestRegistry, cfg.Repository, group.Tag)
 		groupEntry := manifest.GroupEntry{
 			GroupIndex:   group.GroupIndex,
 			Tag:          group.Tag,
-			Image:        group.Image,
+			Image:        manifestImage,
 			ChunkIndexes: make([]int, 0, len(group.Chunks)),
 		}
 		for _, chunk := range group.Chunks {
@@ -173,7 +175,7 @@ func buildManifest(sourceFile string, split *chunker.SplitResult, groups []chunk
 				Index:       chunk.Index,
 				GroupIndex:  group.GroupIndex,
 				GroupTag:    group.Tag,
-				Image:       group.Image,
+				Image:       manifestImage,
 				PathInImage: chunk.PathInImage,
 				Size:        chunk.Size,
 				SHA256:      chunk.SHA256,
@@ -181,6 +183,8 @@ func buildManifest(sourceFile string, split *chunker.SplitResult, groups []chunk
 		}
 		doc.Groups = append(doc.Groups, groupEntry)
 	}
+
+	doc.Registry = cfg.ManifestRegistry
 
 	return doc
 }
