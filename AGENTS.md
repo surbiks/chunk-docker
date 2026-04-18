@@ -139,6 +139,7 @@ This distinction is important and must not be lost during future refactors.
 - Docker integration is intentionally CLI-based through `os/exec`.
 - Grouped images use `FROM scratch` plus one `COPY` per chunk.
 - Docker builds disable provenance and SBOM attestations because some registry mirrors fail to fetch `application/vnd.in-toto+json` referrers during pull.
+- Fetch creates `FROM scratch` containers with a dummy command so `docker create` succeeds even though the image is never started.
 - Publish computes per-chunk SHA256 and full-file SHA256 while streaming the source file once.
 - Fetch pulls each image once, extracts only the chunks listed for that image, verifies chunk checksums, reassembles in chunk order, then verifies the final file checksum.
 

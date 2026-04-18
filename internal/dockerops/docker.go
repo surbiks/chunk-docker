@@ -64,7 +64,7 @@ func (c *Client) Pull(ctx context.Context, image string) error {
 }
 
 func (c *Client) CreateContainer(ctx context.Context, image string) (string, error) {
-	output, err := c.run(ctx, "create", image)
+	output, err := c.run(ctx, "create", image, "/__chunkdocker_noop__")
 	if err != nil {
 		return "", fmt.Errorf("failed to create container from image %s: %w", image, err)
 	}

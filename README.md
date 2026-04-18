@@ -158,6 +158,7 @@ COPY chunk-00002.bin /chunks/chunk-00002.bin
 
 - This MVP is Linux-first.
 - Docker integration uses the Docker CLI through `os/exec`.
+- Because transport images use `FROM scratch`, fetch creates containers with a dummy command so `docker create` succeeds before `docker cp`; the command is never started.
 - Image builds explicitly disable provenance and SBOM attestations so registry mirrors that do not support OCI referrers can still pull the images reliably.
 - Manifest image references may intentionally differ from the push registry so restricted clients can pull from a mirror registry.
 - The fetch workflow is intentionally sequential for predictable behavior.
