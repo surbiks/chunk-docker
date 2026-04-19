@@ -114,8 +114,8 @@ Example:
   "groups": [
     {
       "group_index": 0,
-      "tag": "v1-g00000",
-      "image": "docker.io/myuser/file-chunks:v1-g00000",
+      "tag": "v1.0.0.0.1",
+      "image": "docker.io/myuser/file-chunks:v1.0.0.0.1",
       "chunk_indexes": [0, 1, 2, 3, 4]
     }
   ],
@@ -123,8 +123,8 @@ Example:
     {
       "index": 0,
       "group_index": 0,
-      "group_tag": "v1-g00000",
-      "image": "docker.io/myuser/file-chunks:v1-g00000",
+      "group_tag": "v1.0.0.0.1",
+      "image": "docker.io/myuser/file-chunks:v1.0.0.0.1",
       "path_in_image": "/chunks/chunk-00000.bin",
       "size": 52428800,
       "sha256": "deadbeef"
@@ -137,13 +137,13 @@ Example:
 
 If `chunks_per_image = 1`, each chunk gets its own tag:
 
-- `docker.io/myuser/file-chunks:v1-00000`
-- `docker.io/myuser/file-chunks:v1-00001`
+- `docker.io/myuser/file-chunks:v1.0.0.0.1`
+- `docker.io/myuser/file-chunks:v1.0.0.0.2`
 
 If `chunks_per_image > 1`, consecutive chunks are grouped:
 
-- `docker.io/myuser/file-chunks:v1-g00000`
-- `docker.io/myuser/file-chunks:v1-g00001`
+- `docker.io/myuser/file-chunks:v1.0.0.0.1`
+- `docker.io/myuser/file-chunks:v1.0.0.0.2`
 
 Each grouped image still uses a Dockerfile like:
 

@@ -14,7 +14,7 @@ func TestGroupChunksSingleChunkMode(t *testing.T) {
 	if len(groups) != 2 {
 		t.Fatalf("expected 2 groups, got %d", len(groups))
 	}
-	if groups[0].Tag != "v1-00000" || groups[1].Tag != "v1-00001" {
+	if groups[0].Tag != "v1.0.0.0.1" || groups[1].Tag != "v1.0.0.0.2" {
 		t.Fatalf("unexpected single chunk tags: %+v", groups)
 	}
 }
@@ -30,7 +30,7 @@ func TestGroupChunksGroupedMode(t *testing.T) {
 	if len(groups) != 2 {
 		t.Fatalf("expected 2 groups, got %d", len(groups))
 	}
-	if groups[0].Tag != "v1-g00000" || groups[1].Tag != "v1-g00001" {
+	if groups[0].Tag != "v1.0.0.0.1" || groups[1].Tag != "v1.0.0.0.2" {
 		t.Fatalf("unexpected grouped tags: %+v", groups)
 	}
 	if len(groups[0].Chunks) != 5 || len(groups[1].Chunks) != 1 {

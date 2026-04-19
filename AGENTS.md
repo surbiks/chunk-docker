@@ -117,6 +117,7 @@ This distinction is important and must not be lost during future refactors.
 - `server.chunks_per_image` controls grouping.
 - `server.registry` is the push target.
 - `server.manifest_registry` controls which registry is written into manifest image references and defaults to `server.registry`.
+- `server.release` is expanded into Docker tags like `v1.0.0.0.1`.
 - `server.image_chunk_base_dir` must stay absolute and deterministic.
 - `client.registry_override` can rewrite manifest image references at fetch time.
 - `client.assemble.overwrite` controls whether fetch can replace an existing output file.
@@ -410,7 +411,7 @@ Errors should be:
 - actionable where possible
 
 Prefer errors like:
-- "failed to push image docker.io/user/repo:v1-g00002: ..."
+- "failed to push image docker.io/user/repo:v1.0.0.0.3: ..."
 instead of:
 - "push failed"
 

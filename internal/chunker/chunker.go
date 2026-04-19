@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 type ChunkArtifact struct {
@@ -145,10 +146,24 @@ func GroupChunks(chunks []ChunkArtifact, chunksPerImage int, registry, repositor
 }
 
 func imageTag(release string, chunksPerImage, groupIndex, chunkIndex int) string {
+	version := normalizedVersionTag(release)
 	if chunksPerImage <= 1 {
-		return fmt.Sprintf("%s-%05d", release, chunkIndex)
+		return fmt.Sprintf("%s.%d", version, chunkIndex+1)
 	}
-	return fmt.Sprintf("%s-g%05d", release, groupIndex)
+	return fmt.Sprintf("%s.%d", version, groupIndex+1)
+}
+
+func normalizedVersionTag(release string) string {
+	release = strings.TrimSuffix(strings.TrimSpace(release), ".")
+	if release == "" {
+		return "0.0.0.0"
+	}
+
+	for strings.Count(release, ".") < 3 {
+		release += ".0"
+	}
+
+	return release
 }
 
 func AssembleFile(destination string, chunkPaths []string) error {

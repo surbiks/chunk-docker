@@ -77,6 +77,7 @@ func TestValidateRejectsInvalidConfig(t *testing.T) {
 		"server:",
 		"work_dir is required",
 		"chunk_size must be greater than zero",
+		"release is required",
 		"image_chunk_base_dir must be absolute",
 		"client:",
 		"output_dir is required",
