@@ -45,6 +45,9 @@ client:
 	if cfg.Server.ImageChunkBaseDir != "/chunks" {
 		t.Fatalf("expected default image chunk base dir, got %q", cfg.Server.ImageChunkBaseDir)
 	}
+	if cfg.Server.Build.BaseImage != "scratch" {
+		t.Fatalf("expected default build base image, got %q", cfg.Server.Build.BaseImage)
+	}
 	if cfg.Server.ManifestRegistry != "docker.io" {
 		t.Fatalf("expected manifest registry to default to server registry, got %q", cfg.Server.ManifestRegistry)
 	}

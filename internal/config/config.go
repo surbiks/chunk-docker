@@ -32,8 +32,9 @@ type ServerConfig struct {
 }
 
 type Build struct {
-	NoCache bool `yaml:"no_cache"`
-	Pull    bool `yaml:"pull"`
+	BaseImage string `yaml:"base_image"`
+	NoCache   bool   `yaml:"no_cache"`
+	Pull      bool   `yaml:"pull"`
 }
 
 type Push struct {
@@ -93,6 +94,9 @@ func (c *Root) applyDefaults() {
 	if c.Server.ImageChunkBaseDir == "" {
 		c.Server.ImageChunkBaseDir = "/chunks"
 	}
+	if c.Server.Build.BaseImage == "" {
+		c.Server.Build.BaseImage = "scratch"
+	}
 	if c.Server.Push.Retries == 0 {
 		c.Server.Push.Retries = 1
 	}
@@ -151,6 +155,9 @@ func (c ServerConfig) validate() error {
 		errs = append(errs, errors.New("image_chunk_base_dir must be a valid absolute path"))
 	} else if !path.IsAbs(c.ImageChunkBaseDir) {
 		errs = append(errs, errors.New("image_chunk_base_dir must be absolute"))
+	}
+	if c.Build.BaseImage == "" {
+		errs = append(errs, errors.New("build.base_image is required"))
 	}
 	if c.Push.Retries < 1 {
 		errs = append(errs, errors.New("push.retries must be at least 1"))

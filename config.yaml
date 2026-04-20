@@ -11,6 +11,7 @@ server:
   image_chunk_base_dir: "/chunks"
   keep_temp: false
   build:
+    base_image: "scratch"
     no_cache: true
     pull: false
   push:

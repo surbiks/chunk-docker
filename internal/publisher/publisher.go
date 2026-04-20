@@ -102,16 +102,14 @@ func (p *Publisher) buildAndPushGroup(ctx context.Context, docker *dockerops.Cli
 		return err
 	}
 
-	var dockerfileLines []string
-	dockerfileLines = append(dockerfileLines, "FROM scratch")
-
 	for _, chunk := range group.Chunks {
 		targetPath := filepath.Join(buildContext, chunk.FileName)
 		if err := filesystem.LinkOrCopy(chunk.FilePath, targetPath); err != nil {
 			return fmt.Errorf("prepare build context for chunk %d: %w", chunk.Index, err)
 		}
-		dockerfileLines = append(dockerfileLines, fmt.Sprintf("COPY %s %s", chunk.FileName, chunk.PathInImage))
 	}
+
+	dockerfileLines := renderDockerfile(p.cfg.Server.Build.BaseImage, group.Chunks)
 
 	dockerfilePath := filepath.Join(buildContext, "Dockerfile")
 	if err := os.WriteFile(dockerfilePath, []byte(strings.Join(dockerfileLines, "\n")+"\n"), 0o644); err != nil {
@@ -140,6 +138,14 @@ func (p *Publisher) buildAndPushGroup(ctx context.Context, docker *dockerops.Cli
 	}
 
 	return nil
+}
+
+func renderDockerfile(baseImage string, chunks []chunker.ChunkArtifact) []string {
+	lines := []string{fmt.Sprintf("FROM %s", baseImage)}
+	for _, chunk := range chunks {
+		lines = append(lines, fmt.Sprintf("COPY %s %s", chunk.FileName, chunk.PathInImage))
+	}
+	return lines
 }
 
 func buildManifest(sourceFile string, split *chunker.SplitResult, groups []chunker.GroupPlan, cfg config.ServerConfig) *manifest.Manifest {

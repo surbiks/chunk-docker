@@ -1,6 +1,6 @@
 # chunkdocker
 
-`chunkdocker` is a Go CLI for moving large files through Docker registries by splitting them into logical chunks, storing those chunks in small `FROM scratch` images, and reconstructing the original file on the other side.
+`chunkdocker` is a Go CLI for moving large files through Docker registries by splitting them into logical chunks, storing those chunks in small Docker images, and reconstructing the original file on the other side.
 
 ## What it does
 
@@ -54,6 +54,7 @@ Registry behavior:
 
 - `server.registry`: where `publish` pushes images.
 - `server.manifest_registry`: registry hostname written into manifest image references. If omitted, it defaults to `server.registry`.
+- `server.build.base_image`: base image used in generated Dockerfiles. Defaults to `scratch`, but can be set to `alpine`, `ubuntu`, or another image reference.
 - `client.registry_override`: optional fetch-time registry rewrite. If set, `fetch` rewrites manifest image references to use this registry.
 
 ## Usage
@@ -148,7 +149,7 @@ If `chunks_per_image > 1`, consecutive chunks are grouped:
 Each grouped image still uses a Dockerfile like:
 
 ```dockerfile
-FROM scratch
+FROM alpine:3.20
 COPY chunk-00000.bin /chunks/chunk-00000.bin
 COPY chunk-00001.bin /chunks/chunk-00001.bin
 COPY chunk-00002.bin /chunks/chunk-00002.bin
@@ -158,7 +159,8 @@ COPY chunk-00002.bin /chunks/chunk-00002.bin
 
 - This MVP is Linux-first.
 - Docker integration uses the Docker CLI through `os/exec`.
-- Because transport images use `FROM scratch`, fetch creates containers with a dummy command so `docker create` succeeds before `docker cp`; the command is never started.
+- Publish uses `server.build.base_image` for generated Dockerfiles and defaults to `scratch`.
+- Fetch creates containers with a dummy command so `docker create` succeeds before `docker cp`; the command is never started.
 - Image builds explicitly disable provenance and SBOM attestations so registry mirrors that do not support OCI referrers can still pull the images reliably.
 - Manifest image references may intentionally differ from the push registry so restricted clients can pull from a mirror registry.
 - The fetch workflow is intentionally sequential for predictable behavior.

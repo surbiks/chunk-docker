@@ -118,6 +118,7 @@ This distinction is important and must not be lost during future refactors.
 - `server.registry` is the push target.
 - `server.manifest_registry` controls which registry is written into manifest image references and defaults to `server.registry`.
 - `server.release` is expanded into Docker tags like `v1.0.0.0.1`.
+- `server.build.base_image` controls the generated Dockerfile `FROM` image and defaults to `scratch`.
 - `server.image_chunk_base_dir` must stay absolute and deterministic.
 - `client.registry_override` can rewrite manifest image references at fetch time.
 - `client.assemble.overwrite` controls whether fetch can replace an existing output file.
@@ -138,9 +139,9 @@ This distinction is important and must not be lost during future refactors.
 
 ### Current implementation notes
 - Docker integration is intentionally CLI-based through `os/exec`.
-- Grouped images use `FROM scratch` plus one `COPY` per chunk.
+- Grouped images use configurable `FROM <base image>` plus one `COPY` per chunk.
 - Docker builds disable provenance and SBOM attestations because some registry mirrors fail to fetch `application/vnd.in-toto+json` referrers during pull.
-- Fetch creates `FROM scratch` containers with a dummy command so `docker create` succeeds even though the image is never started.
+- Fetch creates containers with a dummy command so `docker create` succeeds even though the image is never started.
 - Publish computes per-chunk SHA256 and full-file SHA256 while streaming the source file once.
 - Fetch pulls each image once, extracts only the chunks listed for that image, verifies chunk checksums, reassembles in chunk order, then verifies the final file checksum.
 
